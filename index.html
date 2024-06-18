@@ -9,5 +9,15 @@
 </head>
 <body>
     <canvas id="whiteboard" width="800" height="600" style="border:1px solid #000;"></canvas>
+    <div id="toolbar">
+        <button id="saveDrawing">Save Drawing</button>
+        <input type="text" id="drawingId" placeholder="Enter Drawing ID">
+        <button id="loadDrawing">Load Drawing</button>
+        <button onclick="changeColor('black')">Black</button>
+        <button onclick="changeColor('red')">Red</button>
+        <button onclick="changeBrushSize(5)">Small Brush</button>
+        <button onclick="changeBrushSize(10)">Medium Brush</button>
+        <!-- Add more colors and sizes as needed -->
+      </div>
 </body>
 </html>
