@@ -120,3 +120,16 @@ function renderDrawing(drawingData) {
         drawPoint(point); // You would need to define this function
     });
 }
+import React from 'react';
+import Whiteboard from './Whiteboard';
+
+function App() {
+  return (
+    <div className="App">
+      <h1>Collaborative Whiteboard</h1>
+      <Whiteboard />
+    </div>
+  );
+}
+
+export default App;
