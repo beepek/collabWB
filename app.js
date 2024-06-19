@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.getElementById('saveDrawing').addEventListener('click', function() {
     const drawingData = getDrawingData(); // Function to collect data from canvas
-    const drawingName = "My Drawing"; // This could be dynamic or user-defined
+    const drawingName = "My Drawing"; //  dynamic or user-defined
 
     fetch('/saveDrawing', {
         method: 'POST',
@@ -121,14 +121,24 @@ function renderDrawing(drawingData) {
     });
 }
 import React from 'react';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import Whiteboard from './Whiteboard';
+import LoginForm from './LoginForm'; // Make sure to create this component
 
 function App() {
   return (
-    <div className="App">
-      <h1>Collaborative Whiteboard</h1>
-      <Whiteboard />
-    </div>
+    <Router>
+      <div className="App">
+        <h1>Collaborative Whiteboard</h1>
+        <nav>
+          <Link to="/">Home</Link> | <Link to="/login">Login</Link>
+        </nav>
+        <Switch>
+          <Route path="/" exact component={Whiteboard} />
+          <Route path="/login" component={LoginForm} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
