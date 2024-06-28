@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function LoginForm() {
+function RegisterForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitting login form');
-    fetch('http://localhost:8080/login', {
+    console.log('Submitting registration form');
+    fetch('http://localhost:8080/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -19,10 +19,10 @@ function LoginForm() {
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          alert('Login successful');
+          alert('Registration successful');
           navigate('/');
         } else {
-          alert(data.message || 'Login failed');
+          alert(data.message || 'Registration failed');
         }
       })
       .catch(error => console.error('Error:', error));
@@ -30,7 +30,7 @@ function LoginForm() {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <label>
           Username:
@@ -50,10 +50,10 @@ function LoginForm() {
             name="password"
           />
         </label>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
     </div>
   );
 }
 
-export default LoginForm;
+export default RegisterForm;
