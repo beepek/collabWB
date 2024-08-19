@@ -34,6 +34,10 @@ const Whiteboard = () => {
         });
         canvas.add(rect);
 
+        // Clean up the canvas on component unmount
+        return () => {
+            canvas.dispose();
+        };
     }, []);
 
     return (

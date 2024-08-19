@@ -1,4 +1,5 @@
 require('dotenv').config();
+console.log('DB_URI:', process.env.DB_URI);
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -12,6 +13,7 @@ const path = require('path');
 const User = require('./models/User');
 const routes = require('./routes/index');  // Importing the routes
 
+
 // Connect to MongoDB using environment variable
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected...'))
@@ -20,7 +22,9 @@ mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology
     process.exit(1); // Exit the process with an error code
   });
 
+
 const Schema = mongoose.Schema;
+
 
 const pointSchema = new Schema({
     x: Number,
@@ -28,6 +32,7 @@ const pointSchema = new Schema({
     color: String,
     size: Number
 });
+
 
 const drawingSchema = new Schema({
     name: { type: String, default: "Untitled Drawing" },
@@ -38,12 +43,15 @@ const drawingSchema = new Schema({
     }
 });
 
+
 const Drawing = mongoose.model('Drawing', drawingSchema);
+
 
 // Create an Express application
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+
 
 // Use CORS middleware
 app.use(cors({
@@ -51,12 +59,15 @@ app.use(cors({
   credentials: true
 }));
 
-// Serve static files from the 'public' dir
-app.use(express.static('public'));
+
+// Serve static files from the 'build' directory
+app.use(express.static(path.join(__dirname, 'build')));
+
 
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.use(session({
     secret: 'your_secret', //session id cookie
@@ -64,8 +75,10 @@ app.use(session({
     saveUninitialized: false
 }));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -80,15 +93,18 @@ passport.use(new LocalStrategy(
     }
 ));
 
+
 passport.serializeUser(function(user, done) {
     done(null, user.id); // Save user id to the session
 });
+
 
 passport.deserializeUser(function(id, done) {
     User.findById(id, function(err, user) {
         done(err, user); // Retrieve user from the session using the stored id
     });
 });
+
 
 // Registration route
 app.post('/register', (req, res) => {
@@ -109,10 +125,12 @@ app.post('/register', (req, res) => {
         });
 });
 
+
 // Login route
 app.post('/login', passport.authenticate('local'), (req, res) => {
     res.json({ success: true });
 });
+
 
 // Logout route
 app.get('/logout', (req, res) => {
@@ -120,13 +138,16 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+
 // Auth status route
 app.get('/auth-status', (req, res) => {
     res.json({ isAuthenticated: req.isAuthenticated() });
 });
 
+
 // Apply routes from the routes module
 app.use('/', routes);
+
 
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -135,13 +156,16 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('/login');
 }
 
+
 app.get('/whiteboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'whiteboard.html'));
 });
 
+
 // Real-time connection handling
 io.on('connection', (socket) => {
     console.log('A user connected');
+
 
     socket.on('cursorMove', (data) => {
         socket.broadcast.emit('showCursor', {
@@ -151,12 +175,14 @@ io.on('connection', (socket) => {
         });
     });
 
+
     socket.on('startDrawing', (data) => {
         socket.broadcast.emit('userDrawing', {
             userId: socket.id,
             drawing: true
         });
     });
+
 
     socket.on('stopDrawing', () => {
         socket.broadcast.emit('userDrawing', {
@@ -165,14 +191,17 @@ io.on('connection', (socket) => {
         });
     });
 
+
     socket.on('chat message', (msg) => {
         io.emit('chat message', msg);
     });
+
 
     socket.on('disconnect', () => {
         console.log('User disconnected');
     });
 });
+
 
 // Start the server
 const port = process.env.PORT || 8080;
